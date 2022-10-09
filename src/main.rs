@@ -1,5 +1,3 @@
-use std::{fs::File, path::Path};
-
 use clap::Parser;
 
 #[derive(Parser)]
@@ -12,11 +10,9 @@ fn main() {
     let cli = Cli::parse();
     let input = cli.input;
         
-    let root_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let dict_path = root_dir.join("src/dict/xhyx.json");
+    let dict_bytes = include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/src/dict/xhyx.json"));
 
-    let f = File::open(dict_path).unwrap();
-    let dict: serde_json::Value = serde_json::from_reader(f).unwrap();
+    let dict: serde_json::Value = serde_json::from_slice(dict_bytes).unwrap();
     
     for ch in input.chars() {
         match dict[String::from(ch)].as_array() {
